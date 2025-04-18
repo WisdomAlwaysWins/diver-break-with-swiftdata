@@ -29,6 +29,10 @@ struct ContentView: View {
                         CheckMyRoleView()
                     case .participantSubjoin :
                         ParticipantSubjoinView()
+                            .modelContext(context)
+                    case .handOutSubjoinCard(let participants) :
+                        HandOutNewParticipantsView(participants : participants)
+                            .modelContext(context)
                     }
                 }
         }

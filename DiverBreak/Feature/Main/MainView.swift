@@ -13,23 +13,27 @@ struct MainView: View {
     @EnvironmentObject var pathModel: PathModel
     @StateObject var viewModel = MainViewModel()
     
+    @State private var isShowDeleteAlert = false
+    @State private var isShowRevealAlert = false
+    
     var body: some View {
-        VStack(spacing: 48) {
+        VStack(spacing: 20) {
             
-            if viewModel.isJokerRevealed {
-                customNavigationBar
-            }
+            customNavigationBar
             
             titleSection
 
-            if viewModel.isJokerRevealed {
-                roleSummaryGrid
-            } else {
-                buttonGrid
+            ScrollView {
+                if viewModel.isJokerRevealed {
+                    roleSummaryGrid
+                        .padding()
+                } else {
+                    buttonGrid
+                        .padding()
+                }
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 40)
+//        .padding(.horizontal, 20)
         .background(Color.diverBackgroundBlue)
         .navigationBarBackButtonHidden(true)
         .onAppear {
@@ -42,10 +46,10 @@ struct MainView: View {
             isDisplayLeftBtn: true,
             isDisplayRightBtn: true,
             leftBtnAction: { pathModel.popToRoot() },
-            rightBtnAction: { print("헬프 버튼 눌림") },
             leftBtnType: .home,
-            rightBtnType: .help
+            rightBtnType: nil
         )
+        .opacity(viewModel.isJokerRevealed ? 1 : 0)
     }
     
     private var titleSection : some View {
@@ -65,6 +69,7 @@ struct MainView: View {
                 .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
+        .padding(.bottom, 24)
     }
     
     private var buttonGrid : some View {
@@ -76,9 +81,21 @@ struct MainView: View {
             mainButton(title: "회의 삭제하기", icon: "🗑️") {
                 pathModel.popToRoot()
             }
+            .alert("정말 회의를 삭제하시겠어요?", isPresented: $isShowDeleteAlert) {
+                Button("예", role: .destructive) {
+                    pathModel.popToRoot()
+                }
+                Button("아니요", role: .cancel) { }
+            }
 
             mainButton(title: "조커 공개하기", icon: "🃏") {
-                viewModel.isJokerRevealed = true
+                isShowRevealAlert = true
+            }
+            .alert("정말 조커를 공개하시겠어요?", isPresented: $isShowRevealAlert) {
+                Button("공개하기", role: .destructive) {
+                    viewModel.isJokerRevealed = true
+                }
+                Button("취소", role: .cancel) { }
             }
 
             mainButton(title: "인원 추가하기", icon: "➕") {
@@ -88,10 +105,42 @@ struct MainView: View {
     }
     
     private var roleSummaryGrid : some View {
-        VStack {
-            
+        LazyVGrid(columns: [GridItem(), GridItem()], spacing: 20) {
+            ForEach(viewModel.participants) { participant in
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(participant.name)
+                        .font(.headline)
+
+                    if let role = participant.assignedRole {
+                        Text(role.name)
+                            .font(.subheadline)
+                            .foregroundColor(.diverBlue)
+                        
+                        Text(role.guide)
+                            .font(.caption)
+                            .foregroundColor(.diverGray2)
+                        
+                    } else {
+                        Text("역할 없음")
+                            .font(.subheadline)
+                            .foregroundColor(.diverGray0)
+                    }
+
+                    Spacer()
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .aspectRatio(1, contentMode: .fit)
+                .background(Color.white)
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.diverGray0, lineWidth: 1)
+                )
+            }
         }
     }
+    
     
     // MARK: - 공통 버튼 스타일
     private func mainButton(title: String, icon: String, action: @escaping () -> Void) -> some View {

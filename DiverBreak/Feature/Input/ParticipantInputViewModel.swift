@@ -19,17 +19,30 @@ class ParticipantInputViewModel: ObservableObject {
 
     @Published var nicknames: [String] = (0..<3).map { _ in "" }
     @Published var scrollTarget: Int? = nil
-    @Published var focusedIndex: Int?
     @Published var isAlertPresented: Bool = false
     @Published var alertMessage: String = ""
 
     // MARK: - UI 로직
+    
+    func isDuplicated(at index: Int) -> Bool {
+        var set = Set<String>()
 
-    func addNewField() {
+        for (i, name) in validNames.enumerated() {
+            if set.contains(name) {
+                if index == i { return true }
+            } else {
+                set.insert(name)
+            }
+        }
+
+        return false
+    }
+
+    func addNewField(onAdded: @escaping (Int) -> Void) {
         let newIndex = nicknames.count
         nicknames.append("")
         scrollTarget = newIndex
-        focusedIndex = newIndex
+        onAdded(newIndex)
     }
 
     func removeField(at index: Int) {
@@ -40,9 +53,13 @@ class ParticipantInputViewModel: ObservableObject {
         }
     }
 
-    func moveFocus(from index: Int) {
-        let nextIndex = nicknames.indices.dropFirst(index + 1).first { nicknames[$0].isEmpty }
-        focusedIndex = nextIndex
+    func moveFocus(from index: Int, onMove: @escaping (Int) -> Void) {
+        if let nextIndex = nicknames.indices.dropFirst(index + 1).first(where: { nicknames[$0].isEmpty }) {
+            scrollTarget = nextIndex
+            onMove(nextIndex)
+        } else {
+            addNewField(onAdded: onMove)
+        }
     }
 
     // MARK: - 유효성 검사
@@ -73,7 +90,7 @@ class ParticipantInputViewModel: ObservableObject {
     // MARK: - 저장 + 역할 배정
 
     func saveParticipant(pathModel: PathModel) {
-        print("👇🏻 시작하기 버튼 클릭")
+        print("👇🏻 시작하기")
 
         guard validate() else { return }
         guard let context = context else {
@@ -91,7 +108,7 @@ class ParticipantInputViewModel: ObservableObject {
             try context.save()
             print("✅ 참가자 저장 성공")
 
-            assignRoles(in: context)
+            assignRoles()
 
             pathModel.push(.handOutCard)
             
@@ -107,7 +124,13 @@ class ParticipantInputViewModel: ObservableObject {
         }
     }
 
-    private func assignRoles(in context: ModelContext) {
+    private func assignRoles() {
+        
+        guard let context else {
+            print("❎ context가 설정되지 않음")
+            return
+        }
+        
         do {
             var participants = try context.fetch(FetchDescriptor<Participant>())
 

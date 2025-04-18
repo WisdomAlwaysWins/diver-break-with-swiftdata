@@ -13,4 +13,5 @@ enum PathType: Hashable {
     case main
     case checkMyRole
     case participantSubjoin
+    case handOutSubjoinCard(participant : [Participant])
 }

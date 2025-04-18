@@ -53,7 +53,7 @@ struct HandOutCardView: View {
                 Button(action: {
                     viewModel.handleConfirm(pathModel: pathModel)
                 }) {
-                    Text(viewModel.isLastParticipant() ? "메인으로" : "확인")
+                    Text("확인")
                         .font(.headline)
                         .padding(.vertical, 20)
                         .frame(maxWidth: 300)

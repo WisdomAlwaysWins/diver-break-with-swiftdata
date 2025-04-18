@@ -40,7 +40,7 @@ struct RoleCardView: View {
                                 .foregroundColor(.white)
                         }
                     }
-                    .onLongPressGesture(minimumDuration: 2.0) {
+                    .onLongPressGesture(minimumDuration: 0.5) { // TODO: - 시간바꾸기
 //                        print("PRESS")
                         withAnimation {
                             isRevealed = true

@@ -19,51 +19,43 @@ struct ParticipantInputView: View {
     
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                backgroundView
-                contentView
-                
-            }
-            .padding()
-            .navigationBarBackButtonHidden(true)
-            .alert("입력 조건이 맞지 않습니다", isPresented: $viewModel.isAlertPresented) {
-                Button("확인", role: .cancel) {}
-            } message: {
-                Text(viewModel.alertMessage)
-            }
-            .onAppear {
-                viewModel.setContext(context) // context 주입
-            }
+        ZStack(alignment: .top) {
+            backgroundView
+            contentView
+            
+        }
+        .navigationBarBackButtonHidden(true)
+        .alert("입력 조건이 맞지 않습니다", isPresented: $viewModel.isAlertPresented) {
+            Button("확인", role: .cancel) {}
+        } message: {
+            Text(viewModel.alertMessage)
+        }
+        .onAppear {
+            viewModel.setContext(context) // context 주입
         }
     }
+    
     
     var backgroundView : some View {
         Color(.customWhite)
             .ignoresSafeArea()
             .onTapGesture {
-                viewModel.focusedIndex = nil
+                focusedIndex = nil
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
     }
-    
+
     var contentView : some View {
         // TODO: - custom navbar 만들기
         VStack(alignment: .leading, spacing: 20) {
+            
             navgationBar
             
-            NavigationLink("제발..") {
-                HandOutCardView()
-            }
-
-            titleSection
+            headerArea
                 .padding(.horizontal)
                 .padding(.top)
 
             textFieldList
-            
-            addButtonSection
-        
         }
     }
     
@@ -76,13 +68,14 @@ struct ParticipantInputView: View {
                 viewModel.saveParticipant(pathModel : pathModel)
             },
             leftBtnType: nil,
-            rightBtnType: .play
+            rightBtnType: .play,
+            rightBtnColor: .customBlue
 //            rightBtnColor: canProceed ? .diverBlue : .diverIconGray
         )
     }
     
     // MARK: - 설명 섹션
-    var titleSection: some View {
+    var headerArea: some View {
         VStack(alignment: .leading, spacing: 20) {
             (
                 Text("조커는 딱 ")
@@ -103,25 +96,38 @@ struct ParticipantInputView: View {
             .foregroundColor(.secondary)
             .lineSpacing(5)
         }
+        .padding(.horizontal)
     }
     
     private func nicknameCell(index: Int) -> some View {
-        HStack {
-            TextField("이름을 입력하세요.", text: $viewModel.nicknames[index])
-                .id(index)
-                .textFieldStyle(.plain)
-                .padding(.vertical, 10)
-                .focused($focusedIndex, equals: index)
-                .onSubmit {
-                    viewModel.moveFocus(from: index)
-                }
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                TextField("이름을 입력하세요.", text: $viewModel.nicknames[index])
+                    .id(index)
+                    .textFieldStyle(.plain)
+                    .padding(.vertical, 10)
+                    .focused($focusedIndex, equals: index)
+                    .onSubmit {
+                        viewModel.moveFocus(from: index) { nextIndex in
+                            focusedIndex = nextIndex
+                        }
+                    }
 
-            Button {
-                viewModel.removeField(at: index)
-            } label: {
-                Image(systemName: "minus.circle.fill")
-                    .foregroundColor(.gray)
+                Button {
+                    viewModel.removeField(at: index)
+                } label: {
+                    Image(systemName: "minus.circle.fill")
+                        .foregroundColor(.gray)
+                }
             }
+
+            if viewModel.isDuplicated(at: index) {
+                Text("⚠️ 중복된 이름입니다.")
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
+            
+            Divider()
         }
     }
     
@@ -143,6 +149,8 @@ struct ParticipantInputView: View {
                         ForEach(viewModel.nicknames.indices, id: \.self) { index in
                             nicknameCell(index: index)
                         }
+                        
+                        addButtonSection
                     }
                     .padding(.horizontal, 20)
                     .onChange(of: viewModel.scrollTarget) { target in
@@ -157,10 +165,9 @@ struct ParticipantInputView: View {
     var addButtonSection : some View {
         HStack {
             Button {
-                let newIndex = viewModel.nicknames.count
-                viewModel.nicknames.append("")
-                viewModel.scrollTarget = newIndex
-                focusedIndex = newIndex
+                viewModel.addNewField { newIndex in
+                    focusedIndex = newIndex
+                }
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "plus.circle.fill")
@@ -172,7 +179,7 @@ struct ParticipantInputView: View {
 
             Spacer()
         }
-        .padding(.horizontal)
+        .padding(.vertical)
         .padding(.bottom, 10)
     }
     
