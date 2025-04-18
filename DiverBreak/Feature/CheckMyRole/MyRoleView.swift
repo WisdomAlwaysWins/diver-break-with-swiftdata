@@ -36,7 +36,7 @@ struct MyRoleView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.background)
+        .background(isRevealed ? Color.diverGray0.opacity(0.1) : .white)
         .aspectRatio(1, contentMode: .fit)
         .cornerRadius(8)
         .overlay {
@@ -45,6 +45,7 @@ struct MyRoleView: View {
         }
         .contentShape(Rectangle())
         .onLongPressGesture(minimumDuration: 2.0) {
+            HapticManager.success()
             isRevealed = true
         } onPressingChanged: { pressing in
             if !pressing {

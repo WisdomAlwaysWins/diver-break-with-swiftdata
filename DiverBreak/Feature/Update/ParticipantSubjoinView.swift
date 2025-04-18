@@ -28,6 +28,11 @@ struct ParticipantSubjoinView: View {
         } message: {
             Text(viewModel.alertMessage)
         }
+        .onChange(of: viewModel.isAlertPresented) { isPresented in
+            if isPresented {
+                HapticManager.error()
+            }
+        }
         .navigationBarBackButtonHidden(true)
         .onAppear {
             viewModel.setContext(context)
@@ -145,6 +150,7 @@ struct ParticipantSubjoinView: View {
     var addButtonSection : some View {
         HStack {
             Button {
+                HapticManager.medium()
                 viewModel.addNewField { newIndex in
                     focusedIndex = newIndex
                 }
@@ -179,6 +185,7 @@ struct ParticipantSubjoinView: View {
                     }
 
                 Button {
+                    HapticManager.heavy()
                     viewModel.removeField(at: index)
                 } label: {
                     Image(systemName: "minus.circle.fill")
@@ -202,6 +209,7 @@ struct ParticipantSubjoinView: View {
             isDisplayRightBtn: true,
             leftBtnAction: { pathModel.pop() },
             rightBtnAction: {
+                HapticManager.success()
                 viewModel.saveNewParticipant(pathModel : pathModel)
             },
             leftBtnType: .back,

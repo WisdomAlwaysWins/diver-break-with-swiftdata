@@ -51,6 +51,7 @@ struct HandOutCardView: View {
         Group {
             if viewModel.isRevealed {
                 Button(action: {
+                    HapticManager.success()
                     viewModel.handleConfirm(pathModel: pathModel)
                 }) {
                     Text("확인")

@@ -41,7 +41,7 @@ struct RoleCardView: View {
                         }
                     }
                     .onLongPressGesture(minimumDuration: 0.5) { // TODO: - 시간바꾸기
-//                        print("PRESS")
+                        HapticManager.light()
                         withAnimation {
                             isRevealed = true
                         }

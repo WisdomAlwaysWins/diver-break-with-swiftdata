@@ -30,6 +30,11 @@ struct ParticipantInputView: View {
         } message: {
             Text(viewModel.alertMessage)
         }
+        .onChange(of: viewModel.isAlertPresented) { isPresented in
+            if isPresented {
+                HapticManager.error()
+            }
+        }
         .onAppear {
             viewModel.setContext(context) // context 주입
         }
@@ -61,10 +66,11 @@ struct ParticipantInputView: View {
     
     var navgationBar : some View {
         CustomNavigationBar(
-            isDisplayLeftBtn: true,
+            isDisplayLeftBtn: false,
             isDisplayRightBtn: true,
-            leftBtnAction: { print("도움말 눌림") },
+//            leftBtnAction: { print("도움말 눌림") },
             rightBtnAction: {
+                HapticManager.success()
                 viewModel.saveParticipant(pathModel : pathModel)
             },
             leftBtnType: nil,
@@ -114,6 +120,7 @@ struct ParticipantInputView: View {
                     }
 
                 Button {
+                    HapticManager.heavy()
                     viewModel.removeField(at: index)
                 } label: {
                     Image(systemName: "minus.circle.fill")
@@ -165,6 +172,7 @@ struct ParticipantInputView: View {
     var addButtonSection : some View {
         HStack {
             Button {
+                HapticManager.medium()
                 viewModel.addNewField { newIndex in
                     focusedIndex = newIndex
                 }

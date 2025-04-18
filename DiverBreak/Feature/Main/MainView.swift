@@ -75,30 +75,36 @@ struct MainView: View {
     private var buttonGrid : some View {
         LazyVGrid(columns: [GridItem(), GridItem()], spacing: 20) {
             mainButton(title: "역할 확인하기", icon: "🪪") {
+                HapticManager.lightImpact()
                 pathModel.push(.checkMyRole)
             }
 
             mainButton(title: "회의 삭제하기", icon: "🗑️") {
+                HapticManager.lightImpact()
                 pathModel.popToRoot()
             }
             .alert("정말 회의를 삭제하시겠어요?", isPresented: $isShowDeleteAlert) {
                 Button("예", role: .destructive) {
+                    HapticManager.error()
                     pathModel.popToRoot()
                 }
                 Button("아니요", role: .cancel) { }
             }
 
             mainButton(title: "조커 공개하기", icon: "🃏") {
+                HapticManager.lightImpact()
                 isShowRevealAlert = true
             }
             .alert("정말 조커를 공개하시겠어요?", isPresented: $isShowRevealAlert) {
                 Button("공개하기", role: .destructive) {
+                    HapticManager.success()
                     viewModel.isJokerRevealed = true
                 }
                 Button("취소", role: .cancel) { }
             }
 
             mainButton(title: "인원 추가하기", icon: "➕") {
+                HapticManager.lightImpact()
                 pathModel.push(.participantSubjoin)
             }
         }

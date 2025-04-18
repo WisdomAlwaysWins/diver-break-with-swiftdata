@@ -57,6 +57,7 @@ struct HandOutNewParticipantsView: View {
                     } else {
                         viewModel.goToNext()
                     }
+                    HapticManager.success()
                 }) {
                     Text("확인")
                         .font(.headline)
