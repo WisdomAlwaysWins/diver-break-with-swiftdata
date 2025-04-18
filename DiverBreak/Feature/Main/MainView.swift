@@ -75,12 +75,12 @@ struct MainView: View {
     private var buttonGrid : some View {
         LazyVGrid(columns: [GridItem(), GridItem()], spacing: 20) {
             mainButton(title: "역할 확인하기", icon: "🪪") {
-                HapticManager.lightImpact()
+                HapticManager.light()
                 pathModel.push(.checkMyRole)
             }
 
             mainButton(title: "회의 삭제하기", icon: "🗑️") {
-                HapticManager.lightImpact()
+                HapticManager.light()
                 pathModel.popToRoot()
             }
             .alert("정말 회의를 삭제하시겠어요?", isPresented: $isShowDeleteAlert) {
@@ -92,7 +92,7 @@ struct MainView: View {
             }
 
             mainButton(title: "조커 공개하기", icon: "🃏") {
-                HapticManager.lightImpact()
+                HapticManager.light()
                 isShowRevealAlert = true
             }
             .alert("정말 조커를 공개하시겠어요?", isPresented: $isShowRevealAlert) {
@@ -104,7 +104,7 @@ struct MainView: View {
             }
 
             mainButton(title: "인원 추가하기", icon: "➕") {
-                HapticManager.lightImpact()
+                HapticManager.light()
                 pathModel.push(.participantSubjoin)
             }
         }
