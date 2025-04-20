@@ -14,23 +14,34 @@ struct ParticipantInputView: View {
     @StateObject private var viewModel = ParticipantInputViewModel()
     @FocusState private var focusedId: UUID?
     @State private var lastFocusedId: UUID?
+    
+    @State private var isShowingCardsInfo = false
 
     var body: some View {
         VStack(spacing: 0) {
             CustomNavigationBar(
-                isDisplayLeftBtn: false,
+                isDisplayLeftBtn: true,
                 isDisplayRightBtn: true,
+                leftBtnAction: {
+                    HapticManager.success()
+                    isShowingCardsInfo = true
+                },
                 rightBtnAction: {
                     HapticManager.success()
                     viewModel.saveParticipant(pathModel: pathModel)
                 },
-                leftBtnType: nil,
+                leftBtnType: .help,
                 rightBtnType: .play,
                 rightBtnColor: .customBlue
             )
 
             headerArea
             nicknameList
+        }
+        .sheet(isPresented: $isShowingCardsInfo) {
+            CardsInfoTabView()
+                .presentationDetents([.large]) // 원하는 크기로 조절 가능
+                .presentationDragIndicator(.visible) // 위에 드래그 인디케이터 표시 여부
         }
         .background(Color.customWhite.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)

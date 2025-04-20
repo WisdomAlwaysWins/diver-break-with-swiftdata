@@ -15,6 +15,7 @@ struct MainView: View {
     
     @State private var isShowDeleteAlert = false
     @State private var isShowRevealAlert = false
+    @State private var isShowingCardsInfo = false
     
     var body: some View {
         VStack(spacing: 20) {
@@ -33,7 +34,11 @@ struct MainView: View {
                 }
             }
         }
-//        .padding(.horizontal, 20)
+        .sheet(isPresented: $isShowingCardsInfo) {
+            CardsInfoTabView()
+                .presentationDetents([.large]) // 원하는 크기로 조절 가능
+                .presentationDragIndicator(.visible) // 위에 드래그 인디케이터 표시 여부
+        }
         .background(Color.diverBackgroundBlue)
         .navigationBarBackButtonHidden(true)
         .onAppear {
@@ -41,15 +46,35 @@ struct MainView: View {
         }
     }
     
+    @ViewBuilder
     private var customNavigationBar: some View {
-        CustomNavigationBar(
-            isDisplayLeftBtn: true,
-            isDisplayRightBtn: true,
-            leftBtnAction: { pathModel.popToRoot() },
-            leftBtnType: .home,
-            rightBtnType: nil
-        )
-        .opacity(viewModel.isJokerRevealed ? 1 : 0)
+        if viewModel.isJokerRevealed {
+            // 조커 공개 후: 왼쪽 홈, 오른쪽 도움말
+            CustomNavigationBar(
+                isDisplayLeftBtn: true,
+                isDisplayRightBtn: true,
+                leftBtnAction: {
+                    pathModel.popToRoot()
+                },
+                rightBtnAction: {
+                    HapticManager.success()
+                    isShowingCardsInfo = true
+                },
+                leftBtnType: .home,
+                rightBtnType: .help
+            )
+        } else {
+            // 조커 공개 전: 왼쪽 도움말, 오른쪽 플레이
+            CustomNavigationBar(
+                isDisplayLeftBtn: false,
+                isDisplayRightBtn: true,
+                rightBtnAction: {
+                    HapticManager.success()
+                    isShowingCardsInfo = true
+                },
+                rightBtnType: .help
+            )
+        }
     }
     
     private var titleSection : some View {

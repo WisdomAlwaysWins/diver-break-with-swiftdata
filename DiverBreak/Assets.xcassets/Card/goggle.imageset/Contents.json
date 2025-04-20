@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "goggle.png",
+      "filename" : "goggle 1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "goggle@2x.png",
+      "filename" : "goggle 1@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "goggle@3x.png",
+      "filename" : "goggle 1@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

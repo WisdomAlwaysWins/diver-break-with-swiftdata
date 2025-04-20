@@ -15,12 +15,14 @@ struct Role {
     var explain: String     // 간단한 설명
     var guide: String           // 역할 수행 가이드
     var imageName: String       // 에셋 이미지 이름
+    var fullScreenImageName : String
 
-    init(name: String, explain: String, guide: String, imageName: String) {
+    init(name: String, explain: String, guide: String, imageName: String, fullScreenImageName: String) {
         self.id = UUID()
         self.name = name
         self.explain = explain
         self.guide = guide
         self.imageName = imageName
+        self.fullScreenImageName = fullScreenImageName
     }
 }

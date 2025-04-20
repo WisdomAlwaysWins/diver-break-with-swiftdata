@@ -9,35 +9,24 @@ import SwiftUI
 
 struct MyRoleView: View {
     let name: String
-    let roleName: String?
-    let roleGuide: String
-    
-    @State var isRevealed: Bool = false
-    
+    let onLongPressCompleted: () -> Void
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 16) {
             Text(name)
-                .font(.title3)
+                .font(.title)
                 .fontWeight(.semibold)
-            
-            if isRevealed {
-                Text(roleName ?? "역할 없음")
-                    .font(.headline)
-                    .foregroundColor(.customBlue)
-                Text(roleGuide)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            } else {
-                Text("✔️ 길게 눌러 확인")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
+
+            Text("✔️ 길게 눌러 확인")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+
             Spacer()
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(isRevealed ? Color.diverGray0.opacity(0.1) : .white)
         .aspectRatio(1, contentMode: .fit)
+        .background(.white)
         .cornerRadius(8)
         .overlay {
             RoundedRectangle(cornerRadius: 8)
@@ -46,21 +35,13 @@ struct MyRoleView: View {
         .contentShape(Rectangle())
         .onLongPressGesture(minimumDuration: 0.8) {
             HapticManager.success()
-            isRevealed = true
-        } onPressingChanged: { pressing in
-            if !pressing {
-                isRevealed = false
-            }
+            onLongPressCompleted()
         }
     }
 }
 
 #Preview {
-    @State var revealed = false
-    
-    MyRoleView(
-        name: "제이",
-        roleName: "에너지 체커",
-        roleGuide: "이렇게 저렇게"
-    )
+    MyRoleView(name: "제이") {
+        print("👆🏻 역할 확인")
+    }
 }
