@@ -18,7 +18,7 @@ struct ParticipantInputView: View {
     @State private var isShowingCardsInfo = false
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             CustomNavigationBar(
                 isDisplayLeftBtn: true,
                 isDisplayRightBtn: true,
@@ -82,7 +82,8 @@ struct ParticipantInputView: View {
             .lineSpacing(5)
         }
         .padding(.horizontal, 20)
-        .padding(.bottom, 10)
+        .padding(.vertical, 20)
+        .padding(.bottom, 20) // TODO: 기억해!!!!
     }
 
     private var nicknameList: some View {
