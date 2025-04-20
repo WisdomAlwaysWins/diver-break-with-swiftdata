@@ -44,7 +44,7 @@ struct MyRoleView: View {
                 .stroke(Color.diverGray0, lineWidth: 1)
         }
         .contentShape(Rectangle())
-        .onLongPressGesture(minimumDuration: 2.0) {
+        .onLongPressGesture(minimumDuration: 0.8) {
             HapticManager.success()
             isRevealed = true
         } onPressingChanged: { pressing in

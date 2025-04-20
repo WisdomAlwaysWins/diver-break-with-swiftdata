@@ -11,62 +11,77 @@ import SwiftData
 
 @MainActor
 class ParticipantInputViewModel: ObservableObject {
+
+    // MARK: - 내부 구조
+    struct NicknameWrapper: Identifiable, Hashable {
+        let id = UUID()
+        var name: String
+    }
+
+    // MARK: - Dependencies
     private var context: ModelContext?
 
     func setContext(_ context: ModelContext) {
         self.context = context
     }
 
-    @Published var nicknames: [String] = (0..<3).map { _ in "" }
-    @Published var scrollTarget: Int? = nil
+    // MARK: - Published States
+    @Published var nicknames: [NicknameWrapper] = (0..<3).map { _ in NicknameWrapper(name: "") }
+    @Published var scrollTarget: UUID? = nil
     @Published var isAlertPresented: Bool = false
     @Published var alertMessage: String = ""
 
     // MARK: - UI 로직
-    
     func isDuplicated(at index: Int) -> Bool {
-        var set = Set<String>()
+        let trimmed = nicknames[index].name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return false }
 
-        for (i, name) in validNames.enumerated() {
-            if set.contains(name) {
-                if index == i { return true }
-            } else {
-                set.insert(name)
-            }
-        }
-
-        return false
+        let matches = nicknames.filter { $0.name.trimmingCharacters(in: .whitespacesAndNewlines) == trimmed }
+        return matches.count > 1
     }
 
-    func addNewField(onAdded: @escaping (Int) -> Void) {
-        let newIndex = nicknames.count
-        nicknames.append("")
-        scrollTarget = newIndex
-        onAdded(newIndex)
+    func addNewField(onAdded: (UUID) -> Void) {
+        let new = NicknameWrapper(name: "")
+        nicknames.append(new)
+        scrollTarget = new.id
+        onAdded(new.id)
     }
 
-    func removeField(at index: Int) {
+    func removeNickname(at index: Int) {
         if nicknames.count > 3 {
             nicknames.remove(at: index)
         } else {
-            nicknames[index] = ""
+            nicknames[index].name = ""
         }
     }
 
-    func moveFocus(from index: Int, onMove: @escaping (Int) -> Void) {
-        if let nextIndex = nicknames.indices.dropFirst(index + 1).first(where: { nicknames[$0].isEmpty }) {
-            scrollTarget = nextIndex
-            onMove(nextIndex)
+    func removeNicknames(at indexSet: IndexSet) {
+        for index in indexSet {
+            removeNickname(at: index)
+        }
+    }
+
+    func removeEmptyNickname(for id: UUID) {
+        if let index = nicknames.firstIndex(where: { $0.id == id }),
+           nicknames[index].name.trimmingCharacters(in: .whitespaces).isEmpty {
+            removeNickname(at: index)
+        }
+    }
+
+    func moveFocusOrAddNext(from index: Int, onMove: (UUID) -> Void) {
+        if let nextIndex = nicknames.indices.dropFirst(index + 1).first {
+            let nextId = nicknames[nextIndex].id
+            scrollTarget = nextId
+            onMove(nextId)
         } else {
             addNewField(onAdded: onMove)
         }
     }
 
     // MARK: - 유효성 검사
-
     private var validNames: [String] {
-        nicknames.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                 .filter { !$0.isEmpty }
+        nicknames.map { $0.name.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
     }
 
     var validCount: Int {
@@ -74,7 +89,7 @@ class ParticipantInputViewModel: ObservableObject {
     }
 
     func validate() -> Bool {
-        guard validNames.count >= 3 else {
+        guard validCount >= 3 else {
             alertMessage = "참가자는 최소 3명 이상이어야 합니다."
             isAlertPresented = true
             return false
@@ -88,12 +103,9 @@ class ParticipantInputViewModel: ObservableObject {
     }
 
     // MARK: - 저장 + 역할 배정
-
     func saveParticipant(pathModel: PathModel) {
-        print("👇🏻 시작하기")
-
         guard validate() else { return }
-        guard let context = context else {
+        guard let context else {
             print("❎ context가 설정되지 않았습니다.")
             return
         }
@@ -109,9 +121,8 @@ class ParticipantInputViewModel: ObservableObject {
             print("✅ 참가자 저장 성공")
 
             assignRoles()
-
             pathModel.push(.handOutCard)
-            
+
         } catch {
             print("❎ 참가자 저장 실패: \(error)")
         }
@@ -125,12 +136,11 @@ class ParticipantInputViewModel: ObservableObject {
     }
 
     private func assignRoles() {
-        
         guard let context else {
             print("❎ context가 설정되지 않음")
             return
         }
-        
+
         do {
             var participants = try context.fetch(FetchDescriptor<Participant>())
 

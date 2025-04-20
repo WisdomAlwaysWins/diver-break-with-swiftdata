@@ -12,6 +12,7 @@ import SwiftData
 struct DiverBreakApp: App {
     
     @StateObject var pathModel = PathModel()
+    @State private var showSplash = true
     
     var modelContainer: ModelContainer = {
         let schema = Schema([Participant.self])
@@ -27,10 +28,16 @@ struct DiverBreakApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(pathModel)
-//                .environment(\.font, custom("SFProRounded-Regular", size: 14))
-                .modelContainer(modelContainer)
+            if showSplash {
+                SplashView(isActive: $showSplash)
+                    .environmentObject(pathModel)
+                    .modelContainer(modelContainer)
+            } else {
+                ContentView()
+                    .environmentObject(pathModel)
+                    .modelContainer(modelContainer)
+            }
+            
         }
 
     }

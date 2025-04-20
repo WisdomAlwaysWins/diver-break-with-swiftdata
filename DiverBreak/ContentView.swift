@@ -8,30 +8,29 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var pathModel : PathModel
+    @EnvironmentObject var pathModel: PathModel
     @Environment(\.modelContext) private var context
-//    let modelContainer : ModelContainer
-    
+
     var body: some View {
         NavigationStack(path: $pathModel.paths) {
-            ParticipantInputView() // 첫 시작 화면
+            ParticipantInputView()
                 .navigationDestination(for: PathType.self) { path in
                     switch path {
-                    case .participantInput :
+                    case .participantInput:
                         ParticipantInputView()
-                    case .handOutCard :
+                    case .handOutCard:
                         HandOutCardView()
                             .modelContext(context)
-                    case .main :
+                    case .main:
                         MainView()
                             .modelContext(context)
-                    case .checkMyRole :
+                    case .checkMyRole:
                         CheckMyRoleView()
-                    case .participantSubjoin :
+                    case .participantSubjoin:
                         ParticipantSubjoinView()
                             .modelContext(context)
-                    case .handOutSubjoinCard(let participants) :
-                        HandOutNewParticipantsView(participants : participants)
+                    case .handOutSubjoinCard(let participants):
+                        HandOutNewParticipantsView(participants: participants)
                             .modelContext(context)
                     }
                 }
