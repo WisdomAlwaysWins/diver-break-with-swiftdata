@@ -16,9 +16,9 @@ struct CardsInfoTabView: View {
                 ZStack {
                     fullScreenImage(name: viewModel.cards[index])
 
-                    nextButton
-                        .padding(.top, 70)
-                        .frame(maxWidth: .infinity, alignment: .center)
+//                    nextButton
+//                        .padding(.top)
+//                        .frame(maxWidth: .infinity, alignment: .center)
                     
                 }
                 .tag(index)

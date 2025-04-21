@@ -24,16 +24,12 @@ struct SplashView: View {
                 .font(.largeTitle)
                 .fontWeight(.black)
                 .foregroundColor(.white)
-                .font(.largeTitle)
-                .fontWeight(.black)
-                .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .ignoresSafeArea()
+                
 
         }
         .ignoresSafeArea()
-        .background(Color.white)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 isActive = false
