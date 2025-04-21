@@ -39,18 +39,15 @@ class ParticipantSubjoinViewModel: ObservableObject {
         let trimmed = nicknames[index].name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return false }
 
-        // 중복되는 인덱스들 찾기
-        let duplicatedIndices = nicknames.enumerated()
+        let duplicateIndices = nicknames.enumerated()
             .filter { $0.element.name.trimmingCharacters(in: .whitespacesAndNewlines) == trimmed }
             .map { $0.offset }
 
-        // 기존 참여자와 중복이면 무조건 마지막에만 표시
-        if existingNames.contains(trimmed) {
-            return duplicatedIndices.last == index
+        if existingNames.contains(trimmed) { // 기존 참여자와 중복되면 무조건 표시
+            return true
         }
 
-        // 새로 입력한 항목 중에서 중복이면 마지막 인덱스만 true
-        return duplicatedIndices.count > 1 && duplicatedIndices.last == index
+        return duplicateIndices.count > 1 && duplicateIndices.first != index
     }
 
     func addNewField(onAdded: (UUID) -> Void) {

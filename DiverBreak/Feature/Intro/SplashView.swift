@@ -27,7 +27,6 @@ struct SplashView: View {
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    
                 
                 Text("SHOUT OUT TO SNOW AND DAIN")
                     .font(.subheadline)

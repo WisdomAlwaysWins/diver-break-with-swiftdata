@@ -36,8 +36,13 @@ class ParticipantInputViewModel: ObservableObject {
         let trimmed = nicknames[index].name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return false }
 
-        let matches = nicknames.filter { $0.name.trimmingCharacters(in: .whitespacesAndNewlines) == trimmed }
-        return matches.count > 1
+        // 같은 이름이 있는 인덱스들 찾기
+        let duplicatedIndices = nicknames.enumerated()
+            .filter { $0.element.name.trimmingCharacters(in: .whitespacesAndNewlines) == trimmed }
+            .map { $0.offset }
+
+        // 중복이 두 개 이상일 경우, 가장 먼저 등장한 인덱스만 OK
+        return duplicatedIndices.count > 1 && duplicatedIndices.firstIndex(of: index) != 0
     }
 
     func addNewField(onAdded: (UUID) -> Void) {
