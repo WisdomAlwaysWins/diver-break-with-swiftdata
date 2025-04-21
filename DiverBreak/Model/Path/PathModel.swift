@@ -19,8 +19,6 @@ class PathModel : ObservableObject {
         self.paths = paths
     }
     
-    
-    
     func push(_ path : PathType) {
         paths.append(path)
     }
