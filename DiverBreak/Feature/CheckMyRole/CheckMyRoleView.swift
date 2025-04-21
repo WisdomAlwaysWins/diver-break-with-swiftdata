@@ -70,7 +70,7 @@ struct CheckMyRoleView: View {
 
     private var headerArea: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("내 이름을 길게 눌러\n역할을 확인해보세요.")
+            Text("자신의 이름을 길게 눌러\n역할을 확인해보세요.")
                 .font(.title)
                 .fontWeight(.medium)
                 .lineSpacing(5)
