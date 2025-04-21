@@ -14,10 +14,10 @@ struct MyRoleView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(name)
-                .font(.title)
+                .font(.headline)
                 .fontWeight(.semibold)
 
-            Text("✔️ 길게 눌러 확인")
+            Text("👇🏻 길게 눌러 확인")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 

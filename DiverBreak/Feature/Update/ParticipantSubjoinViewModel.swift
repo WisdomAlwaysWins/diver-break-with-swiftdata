@@ -180,7 +180,7 @@ class ParticipantSubjoinViewModel: ObservableObject {
                     assignedRole = roles.randomElement()!
                 } else {
                     guard !unassignedRoles.isEmpty else {
-                        print("❌ 역할이 부족합니다.")
+                        print("❎ 역할이 부족합니다.")
                         return
                     }
                     assignedRole = unassignedRoles.removeFirst()

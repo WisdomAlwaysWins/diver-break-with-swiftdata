@@ -8,17 +8,12 @@
 import SwiftUI
 import SwiftData
 
-struct SelectedRoleData: Identifiable, Equatable {
-    var id: UUID = UUID()
-    let name: String
-    let image: String
-}
-
 struct CheckMyRoleView: View {
     @EnvironmentObject var pathModel: PathModel
     @Query(sort: \Participant.name) private var participants: [Participant]
-
-    @State private var selectedRole: SelectedRoleData?
+    
+    @StateObject private var viewModel = CheckMyRoleViewModel()
+    @Environment(\.modelContext) private var context
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -26,27 +21,27 @@ struct CheckMyRoleView: View {
             contentView
         }
         .navigationBarBackButtonHidden(true)
-        .sheet(item: $selectedRole) { role in
+        .sheet(item: $viewModel.selectedRole) { role in
             RoleCardFullscreenView(
                 name: role.name,
                 fullscreenImageName: role.image,
-                onClose: { selectedRole = nil }
+                onClose: { viewModel.selectedRole = nil }
             )
+        }
+        .onAppear {
+            viewModel.setContext(context)
         }
     }
 
     private var backgroundView: some View {
-        Color(.customWhite)
+        Color(.customBackgroundBlue)
             .ignoresSafeArea()
     }
 
     private var contentView: some View {
         VStack(alignment: .leading, spacing: 20) {
             navigationBar
-
             headerArea
-                .padding(.horizontal)
-                .padding(.top)
 
             ScrollView {
                 LazyVGrid(columns: [GridItem(), GridItem()], spacing: 20) {
@@ -54,12 +49,7 @@ struct CheckMyRoleView: View {
                         MyRoleView(
                             name: participant.name,
                             onLongPressCompleted: {
-                                if let role = RoleCardProvider.role(named: participant.assignedRoleName ?? "") {
-                                    selectedRole = SelectedRoleData(
-                                        name: participant.name,
-                                        image: role.fullScreenImageName
-                                    )
-                                }
+                                viewModel.selectRole(for: participant)
                             }
                         )
                     }
@@ -84,8 +74,19 @@ struct CheckMyRoleView: View {
                 .font(.title)
                 .fontWeight(.medium)
                 .lineSpacing(5)
+            
+        
+            (
+                Text("더 좋은 아이디어가 있을지\n") +
+                Text("휴식 경험").foregroundColor(.customBlue).bold() +
+                Text("을 떠올려보세요!")
+            )
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(.secondary)
+                .lineSpacing(5)
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 20)
     }
 }
 
