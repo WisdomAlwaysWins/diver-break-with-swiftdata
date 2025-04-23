@@ -18,13 +18,13 @@ class CheckMyRoleViewModel: ObservableObject {
         self.context = context
     }
 
-    func roleFor(participant: Participant) -> Role? {
+    func fetchRole(participant: Participant) -> Role? {
         guard let roleName = participant.assignedRoleName else { return nil }
         return RoleCardProvider.role(named: roleName)
     }
 
-    func selectRole(for participant: Participant) {
-        if let role = roleFor(participant: participant) {
+    func setSelectedRole(for participant: Participant) {
+        if let role = fetchRole(participant: participant) {
             selectedRole = SelectedRoleData(name: participant.name, image: role.fullScreenImageName)
         }
     }

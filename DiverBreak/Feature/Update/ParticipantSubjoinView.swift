@@ -12,7 +12,6 @@ struct ParticipantSubjoinView: View {
     @EnvironmentObject var pathModel: PathModel
     @StateObject private var viewModel = ParticipantSubjoinViewModel()
     @FocusState private var focusedId: UUID?
-    @State private var lastFocusedId: UUID?
     @State private var isExpanded = false
 
     var body: some View {
@@ -121,12 +120,6 @@ struct ParticipantSubjoinView: View {
                     }
                     viewModel.scrollTarget = nil
                 }
-            }
-            .onChange(of: focusedId) { newValue in
-                if newValue == nil, let lastId = lastFocusedId {
-                    viewModel.removeEmptyNickname(for: lastId)
-                }
-                lastFocusedId = newValue
             }
         }
         .padding(.horizontal)

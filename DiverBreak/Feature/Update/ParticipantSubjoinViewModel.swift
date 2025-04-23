@@ -72,13 +72,6 @@ class ParticipantSubjoinViewModel: ObservableObject {
         }
     }
 
-    func removeEmptyNickname(for id: UUID) {
-        if let index = nicknames.firstIndex(where: { $0.id == id }),
-           nicknames[index].name.trimmingCharacters(in: .whitespaces).isEmpty {
-            removeNickname(at: index)
-        }
-    }
-
     func moveFocusOrAddNext(from index: Int, onMove: (UUID) -> Void) {
         if let nextIndex = nicknames.indices.dropFirst(index + 1).first {
             onMove(nicknames[nextIndex].id)

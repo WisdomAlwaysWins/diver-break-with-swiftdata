@@ -13,7 +13,6 @@ struct ParticipantInputView: View {
     @EnvironmentObject var pathModel: PathModel
     @StateObject private var viewModel = ParticipantInputViewModel()
     @FocusState private var focusedId: UUID?
-    @State private var lastFocusedId: UUID?
     
     @State private var isShowingCardsInfo = false
 
@@ -40,8 +39,8 @@ struct ParticipantInputView: View {
         }
         .sheet(isPresented: $isShowingCardsInfo) {
             CardsInfoTabView()
-                .presentationDetents([.large]) // 원하는 크기로 조절 가능
-                .presentationDragIndicator(.visible) // 위에 드래그 인디케이터 표시 여부
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
         }
         .background(Color.customWhite.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
@@ -112,12 +111,6 @@ struct ParticipantInputView: View {
                     viewModel.scrollTarget = nil
                 }
             }
-            .onChange(of: focusedId) { newValue in
-                if newValue == nil, let lastId = lastFocusedId {
-                    viewModel.removeEmptyNickname(for: lastId)
-                }
-                lastFocusedId = newValue
-            }
         }
         .padding(.horizontal, 20)
     }
@@ -151,7 +144,7 @@ struct ParticipantInputView: View {
             }
 
             if viewModel.isDuplicated(at: index) {
-                Text("⚠️ 중복된 이름입니다.")
+                Text("중복된 이름입니다.")
                     .font(.caption)
                     .foregroundColor(.red)
             }

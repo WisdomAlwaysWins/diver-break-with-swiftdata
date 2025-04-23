@@ -10,7 +10,7 @@ import SwiftUI
 struct RoleCardFullscreenView: View {
     let name: String
     let fullscreenImageName: String
-    let onClose: () -> Void
+//    let onClose: () -> Void // 얘는 왜? 클로저...?
 
     var body: some View {
         ZStack {
@@ -25,7 +25,5 @@ struct RoleCardFullscreenView: View {
 }
 
 #Preview {
-    RoleCardFullscreenView(name: "제이", fullscreenImageName: "metimecard") {
-        print("닫기")
-    }
+    RoleCardFullscreenView(name: "제이", fullscreenImageName: "metimecard")
 }

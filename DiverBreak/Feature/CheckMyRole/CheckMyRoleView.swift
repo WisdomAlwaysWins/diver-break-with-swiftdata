@@ -24,8 +24,8 @@ struct CheckMyRoleView: View {
         .sheet(item: $viewModel.selectedRole) { role in
             RoleCardFullscreenView(
                 name: role.name,
-                fullscreenImageName: role.image,
-                onClose: { viewModel.selectedRole = nil }
+                fullscreenImageName: role.image
+//                onClose: { viewModel.selectedRole = nil } // sheet는 닫히면 자동으로 nil로 만들어준다 와우!
             )
         }
         .onAppear {
@@ -49,7 +49,7 @@ struct CheckMyRoleView: View {
                         MyRoleView(
                             name: participant.name,
                             onLongPressCompleted: {
-                                viewModel.selectRole(for: participant)
+                                viewModel.setSelectedRole(for: participant)
                             }
                         )
                     }
