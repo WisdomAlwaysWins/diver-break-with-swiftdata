@@ -176,7 +176,7 @@ struct MainView: View {
     // MARK: - 공통 버튼 스타일
     private func mainButton(title: String, icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 40) {
+            VStack(alignment: .center, spacing: 40) {
                 Text(title)
                     .font(.headline)
                     .foregroundColor(.customBlack)
